@@ -32,7 +32,7 @@
     "function-content-type": "text",
     "handler": "handler.main",
     "horizontalPodAutoscaler": "{{horizontalPodAutoscaler}}",
-    "runtime": "nodejs8",
+    "runtime": "nodejs12",
     "timeout": ""
   }
 }
