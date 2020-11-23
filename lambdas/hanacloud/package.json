@@ -1,0 +1,19 @@
+{
+  "name": "hanacloud",
+  "main": "app.js",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "qs": "^6.9",
+    "@sap/hana-client": "^2.6",
+    "util": "^0.12.3",
+    "perf_hooks": "^0.0.1",
+    "string-builder": "^0.1.7"
+  },
+  "devDependencies": {},
+  "buildParameters": {
+    "function_size": "XS",
+    "namespace": "default",
+    "enable_api": true
+  }
+}

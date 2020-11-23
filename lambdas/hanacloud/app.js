@@ -1,0 +1,560 @@
+const axios = require('axios')
+const qs = require('qs')
+const hana = require("@sap/hana-client");
+const { PerformanceObserver, performance } = require('perf_hooks');
+const util = require('util');
+const StringBuilder = require("string-builder");
+
+
+// https://stackoverflow.com/questions/44072750/how-to-send-basic-auth-with-axios
+// cubes: sap/bc/ina/service/v2/GetResponse?Request={%22Metadata%22:{%22Expand%22:[%22Cubes%22]}}
+async function ina(){   
+    let result; 
+    await axios.get("http://myhana:8090/sap/bc/ina/service/v2/GetServerInfo", {
+      withCredentials: true,
+      proxy: {
+        host: 'connectivity-proxy.default',
+        port: 20003
+      },
+      auth: {
+      username: "Admin001",
+      password: "Password1"
+      },
+      headers: {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br"
+        //"Authorization": "Basic QWRtaW4wMDE6UGFzc3dvcmQx"
+      }
+    }).then(function(response) {
+      console.log('Authenticated');
+      result = JSON.stringify(response.data, null, 4);
+      console.log(result);
+    }).catch(function(error) {
+      console.log('Error on Authentication');
+      return error;
+    });
+    
+    //result = await axios.get("http://myhana:8090/");
+    return result;
+}
+
+async function cubes(){   
+    let result; 
+    await axios.get("http://myhana:8090/sap/bc/ina/service/v2/GetResponse?Request={%22Metadata%22:{%22Expand%22:[%22Cubes%22]}}", {
+      withCredentials: true,
+      proxy: {
+        host: 'connectivity-proxy.default',
+        port: 20003
+      },
+      auth: {
+      username: "Admin001",
+      password: "Password1"
+      },
+      headers: {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br"
+        //"Authorization": "Basic QWRtaW4wMDE6UGFzc3dvcmQx"
+      }
+    }).then(function(response) {
+      console.log('Authenticated');
+      result = JSON.stringify(response.data, null, 4);
+      console.log(result);
+    }).catch(function(error) {
+      console.log('Error on Authentication');
+      return error;
+    });
+    
+    //result = await axios.get("http://myhana:8090/");
+    return result;
+}
+
+async function phll41000067d(){    
+    let result; 
+    await axios.get("http://phll41000067d:8090/sap/bc/ina/service/v2/GetServerInfo", {
+      withCredentials: true,
+      maxContentLength: 20000,
+      proxy: {
+        host: 'connectivity-proxy.default',
+        port: 20003
+      },
+      auth: {
+      username: "Admin001",
+      password: "Password123456789"
+      },
+      headers: {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        //"Authorization": "Basic QWRtaW4wMDE6UGFzc3dvcmQxMjM0NTY3ODk=",
+        "Cache-Control": "no-cache"
+      }
+    }).then(function(response) {
+      console.log('Authenticated');
+      result = JSON.stringify(response.data);
+      console.log(result);
+    }).catch(function(error) {
+      console.log('Error on Authentication');
+      console.log(error);
+      result = JSON.stringify(error);
+    });
+    
+    //result = await axios.get("http://phll41000067d:8090/");
+    return result;
+}
+
+
+// https://stackoverflow.com/questions/63744193/axios-equivalent-of-curl
+// https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index
+// https://laptrinhx.com/axios-source-series-internal-adapter-2340131636/
+// https://stackoverflow.com/questions/44182951/axios-chaining-multiple-api-requests
+//
+async function f74008aa7(){
+      
+    // curl -X POST -d '{"password":"Password1","clientType":"","auth":"secEnterprise","userName":"Administrator"}' -H "Accept: application/json" -H "Content-Type: application/json" http://34.235.91.21:8080/biprws/logon/long 
+    
+  //let mydata = qs.stringify({"password":"Password1","clientType":"","auth":"secEnterprise","userName":"Administrator"});     
+  let mydata = '{"password":"Password1","clientType":"","auth":"secEnterprise","userName":"Administrator"}';  
+  let config = {
+    method: 'post',
+    url: 'http://mo-f74008aa7:8080/biprws/logon/long',
+    //withCredentials: true,
+    proxy: {
+    host: 'connectivity-proxy.default',
+    port: 20003
+    },
+    headers: { 
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    //data : JSON.stringify(mydata)
+    data : mydata
+};  
+let logonToken;
+
+//axios.defaults.headers.post['Content-Type'] = 'application/json';
+//await axios.post(config.url, config.data, config.headers)
+await axios(config)
+.then((response) => {
+    logonToken = JSON.stringify(response.data.logonToken);
+    //console.log(JSON.stringify(response.data));
+    console.log(logonToken);
+    console.log(response.status);
+})
+.catch((error) => {
+    console.log(error);
+    return JSON.stringify(error);
+});
+
+/*
+curl --proxy http://connectivity-proxy.default:20003 -i -H "Accept: application/json" -H "Content-Type: application/json" -H "X-SAP-LogonToken: bihost.dummy.nodomain:6400@{3&2=144665,U3&2v=bihost.dummy.nodomain:6400,UP&66=40,U3&68=secEnterprise:LUC,UP&S9=19481,U3&qe=100,U3&vz=13cXwUjamekeQop7D.e6YYZ.b0wmTfUYR1Au4KPwITFeOhQku8Ezr27o9vHMPUSQ,UP}" http://biprws:8080/biprws/raylight/v1/documents?limit=50
+*/
+
+ let configGet = {
+    method: 'get',
+    url: 'http://mo-f74008aa7:8080/biprws/raylight/v1/documents?limit=50',
+    //withCredentials: true,
+    proxy: {
+    host: 'connectivity-proxy.default',
+    port: 20003
+    },
+    headers: { 
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "X-SAP-LogonToken" : logonToken
+    }
+};  
+
+let documents;
+await axios(configGet)
+.then((response) => {
+    documents = JSON.stringify(response.data, null, 4 /*identation */);
+    console.log(documents);
+    console.log(response.status);
+})
+.catch((error) => {
+    console.log(error);
+});
+
+
+return documents;
+}
+
+// https://www.saplearners.com/how-to-connect-sap-hana-cloud-database-using-node-js/
+// https://www.npmjs.com/package/@sap/hana-client
+// https://blogs.sap.com/2017/08/30/how-to-access-an-on-premise-hana-through-sap-cloud-connector-via-jdbc-from-sap-cloud-platform-neo-java-app/
+// https://help.sap.com/viewer/1efad1691c1f496b8b580064a6536c2d/Cloud/en-US/109397c2206a4ab2a5386d494f4cf75e.html
+// https://www.syedhussim.com/hana-db/connect-to-hana-db-using-nodejs.html
+// https://developers.sap.com/tutorials/hana-clients-node.html
+// https://help.sap.com/viewer/f1b440ded6144a54ada97ff95dac7adf/2.5/en-US/12b563c177574742bcad6dfbff315364.html
+
+// https://stackoverflow.com/questions/52669596/promise-all-with-axios
+// https://developers.sap.com/tutorials/hana-clients-node.html
+//
+function getAllData(URLs){
+  return Promise.all(URLs.map(fetchData));
+}
+
+function fetchData(URL) {
+  return axios
+    .get(URL)
+    .then(function(response) {
+      return {
+        success: true,
+        data: response.data
+      };
+    })
+    .catch(function(error) {
+      return { success: false };
+    });
+}
+
+// https://stackoverflow.com/questions/5180382/convert-json-data-to-a-html-table
+//
+function tohtml(data, resultString) {
+  let key = [];
+  let table = "<table border==\"1\"><tr>";
+
+  /*
+  for (key in data[0]) {
+    //table += '<td>' + key + '</td>';
+    table += '<th>' + key + '</th>';
+  }
+  table += "</tr>";
+  for (var i = 0; i < data.length; i++) {
+    table += '<tr>';
+    for (key in data[i]) {
+      table += '<td>' + data[i][key] + '</td>';
+    }
+    table += '</tr>';
+  }
+  table += "</table>";
+
+  */
+
+  let columnSet = [];
+
+  for (var i = 0; i < data.length; i++) {
+      var rowHash = data[i];
+      for (key in rowHash) {
+        //if (  $.inArray(key, columnSet) == -1) {
+        if (columnSet.indexOf(key) == -1) {
+          columnSet.push(key);
+          table += '<th>' + key + '</th>';
+        }
+      }
+    }
+
+  table += "</tr>";
+  for (var i = 0; i < data.length; i++) {
+    table += '<tr>';
+    for (var colIndex = 0; colIndex < columnSet.length; colIndex++) {
+      var cellValue = data[i][columnSet[colIndex]];
+      if (cellValue == null) cellValue = "";
+  
+      table += '<td>' + cellValue + '</td>';
+    }
+    table += '</tr>';
+  }
+  table += "</table>";
+
+
+  // https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Styling_tables
+
+  let dynamicHtml = `<p>Data: ${'<pre>' + resultString+ '</pre>'}</p>`;
+
+  //         font-family: 'Rock Salt', cursive;
+  //         font-family:"Courier New", Courier, monospace;
+  
+  const html = `
+  <html>
+      <style>
+      h1 { color: #73757d; }
+      table { border-collapse: collapse; border: 2px solid green; }
+      table thead{
+        background:#ccc;
+      }
+      
+      thead, tfoot {
+        background: url(leopardskin.jpg);
+        color: white;
+        text-shadow: 1px 1px 1px black;
+      }
+      
+      tr:nth-child(even) td {background: #f2f2f2;}
+      thead th, tfoot th, tfoot td {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+        border: 3px solid grey;
+        font-size: 10px;
+      }     
+      html {
+        font-family: Verdana, sans-serif
+      }
+      
+      thead th, tfoot th {
+        font-family: 'helvetica neue', helvetica, arial, sans-serif;
+      }
+
+      th {
+        letter-spacing: 1px;
+      }
+
+      td {
+        letter-spacing: 1px;
+        font-size: 10px;
+      }
+
+      tbody td {
+        text-align: center;
+      }
+
+      tfoot th {
+        text-align: right;
+      }
+    </style>
+    <body>
+     <header>
+      <h3>${"jdbc-hana-test"}</h3>
+      ${table}
+      <h4>${"SQL query counters:"}</h4>
+      ${dynamicHtml}
+      </header>
+    </body>
+  </html>`;  
+  
+  return html;
+}
+
+function sleep(millis) {
+  return new Promise(resolve => setTimeout(resolve, millis));
+}
+
+// https://stackoverflow.com/questions/20967006/how-to-create-a-sleep-delay-in-nodejs-that-is-blocking
+// https://developers.sap.com/tutorials/hana-clients-node.html
+// https://www.syedhussim.com/hana-db/connect-to-hana-db-using-nodejs.html
+//
+async function hanajdbc() {
+    /** */
+    var connOptions = {
+    serverNode: "phll41000069d:39015",
+    encrypt: "false",
+    sslValidateCertificate: "false",
+    uid: "Admin001",
+    pwd: "Password1",
+    proxyUserName: "2.",
+    //proxyPassword: "6jFDr1vvqqV1V4ZRY8IAjIf5lZE=",
+    proxyHostname: "connectivity-proxy.default",
+    proxyPort: "20004" 
+    }; 
+
+    var t0 = performance.now();
+    var dbConnection = hana.createConnection();
+
+    var sqlStatement = "SELECT * FROM SYS.M_SERVICES";
+    var resultset = 0;
+    var resultset2 = 0;
+    var perfcounter = 0;
+    
+    dbConnection.connect(connOptions, function (err) {
+      if (err) {
+          return console.error(err);
+      }
+      
+      var rows = dbConnection.exec(sqlStatement, function(err, rows) {
+          if (err) {
+              return console.error(err);
+          }
+          resultset = rows; 
+          resultset2 = util.inspect(rows, { colors: false });
+          
+          console.log(resultset);
+          var t1 = performance.now();
+          
+          perfcounter = "number of rows: " + rows.length + " time in msec " +  (t1 - t0);
+          
+          console.log(resultset);
+          dbConnection.disconnect(function(err) {
+              if (err) {
+                  return console.error(err);
+              }   
+          });          
+      });
+    });
+    
+    await sleep(2000);
+/*
+     if (err) throw err;
+      dbConnection.exec(
+        sqlStatement,
+        function (err, result) {
+          if (err) throw err;
+          console.log(result[0]);
+          dbConnection.disconnect();
+          sqlResult = JSON.stringify(result, null, 4);
+        }
+      );
+     });   */
+     
+    //return JSON.stringify(rows, null, 4);
+    let sb = new StringBuilder();
+    sb.appendFormat("sqlStatement : {0}", sqlStatement);
+    sb.appendLine();
+    sb.appendFormat("perfcounter : {0}", perfcounter);
+    sb.appendLine();
+    
+    return tohtml(resultset, sb.append(resultset2).toString()); // html resultset
+    return sb.append(resultset2).toString();
+    
+    return resultset; // json resultset 
+}
+
+/*
+{
+  "host": "zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com",
+  "port": "21022",
+  "driver": "com.sap.db.jdbc.Driver",
+  "url": "jdbc:sap://zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com:21022?encrypt=true&validateCertificate=true&currentschema=D2D4E6C18E7044B2B75416F0AC035F94",
+  "schema": "D2D4E6C18E7044B2B75416F0AC035F94",
+  "hdi_user": "D2D4E6C18E7044B2B75416F0AC035F94_C1EEV4RVESSNBPW7XPLPZTXVW_DT",
+  "hdi_password": "Gm5wBYg0v6b1rDF4B7mhVWQbvNIb9n85XVaSTnDGtmRqaEgELcIu51j_ebbWsZox_F0NUmry5pa-zyGAtgY-XJSuHXq-cpJzF_ASHcdLcfnPR_cmFDi16GcUy24i60j9",
+  "user": "D2D4E6C18E7044B2B75416F0AC035F94_C1EEV4RVESSNBPW7XPLPZTXVW_RT",
+  "password": "Ri0JIvSIQrsufBMogyQiblstD2kXvUWMPw.AcFeqeBqLGfFCSD9O2Ap5CzBcc9JrrCUoD3-6Dysdnx1AjQpQ18.Qy.mBIyfuQPWFy6lniU0ku2bbJJQ9AKBdWg.bbV7d",
+  "certificate": "-----BEGIN CERTIFICATE-----\nMIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh\nMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\nd3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD\nQTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVT\nMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j\nb20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsB\nCSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97\nnh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt\n43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7P\nT19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4\ngdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAO\nBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbR\nTLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUw\nDQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/Esr\nhMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg\n06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJF\nPnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0ls\nYSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQk\nCAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=\n-----END CERTIFICATE-----\n"
+}
+*/
+// https://developers.sap.com/tutorials/hana-clients-jdbc.html
+// https://www.saplearners.com/how-to-connect-sap-hana-cloud-database-using-node-js/
+// https://blogs.sap.com/2020/04/13/hana-secure-network-communication-part-ii/
+// https://blogs.sap.com/2018/08/06/connecting-to-an-sap-hana-service-database/
+// https://blogs.sap.com/2020/06/29/hana-cloud_publish-multiple-hdi-containers-to-multiple-sac-tenants-via-one-hana-analytics-adapter/
+
+async function hanacloud() {
+    /** */
+    var connOptions = {
+    serverNode: "zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com:21022",
+    encrypt: "true",
+    sslValidateCertificate: "false",
+    uid: "D2D4E6C18E7044B2B75416F0AC035F94_C1EEV4RVESSNBPW7XPLPZTXVW_RT",
+    pwd: "Ri0JIvSIQrsufBMogyQiblstD2kXvUWMPw.AcFeqeBqLGfFCSD9O2Ap5CzBcc9JrrCUoD3-6Dysdnx1AjQpQ18.Qy.mBIyfuQPWFy6lniU0ku2bbJJQ9AKBdWg.bbV7d",
+    
+    }; 
+
+    var t0 = performance.now();
+    var dbConnection = hana.createConnection();
+
+    var sqlStatement = "SELECT * FROM TABLES WHERE SCHEMA_NAME = 'D2D4E6C18E7044B2B75416F0AC035F94'";  //"SELECT * FROM SCHEMAS";  //"SELECT * FROM SYS.M_DATABASES"; //"SELECT * FROM SYS.M_SERVICES";
+
+    var resultset = 0;
+    var resultset2 = 0;
+    var perfcounter = 0;
+    
+    dbConnection.connect(connOptions, function (err) {
+      if (err) {
+          return console.error(err);
+      }
+      
+      var rows = dbConnection.exec(sqlStatement, function(err, rows) {
+          if (err) {
+              return console.error(err);
+          }
+          resultset = rows; 
+          resultset2 = util.inspect(rows, { colors: false });
+          
+          console.log(resultset);
+          var t1 = performance.now();
+          
+          perfcounter = "number of rows: " + rows.length + " time in msec " +  (t1 - t0);
+          
+          console.log(resultset);
+          dbConnection.disconnect(function(err) {
+              if (err) {
+                  return console.error(err);
+              }   
+          });          
+      });
+    });
+    
+    await sleep(2000);
+/*
+     if (err) throw err;
+      dbConnection.exec(
+        sqlStatement,
+        function (err, result) {
+          if (err) throw err;
+          console.log(result[0]);
+          dbConnection.disconnect();
+          sqlResult = JSON.stringify(result, null, 4);
+        }
+      );
+     });   */
+     
+    //return JSON.stringify(rows, null, 4);
+    let sb = new StringBuilder();
+    sb.appendFormat("sqlStatement : {0}", sqlStatement);
+    sb.appendLine();
+    sb.appendFormat("perfcounter : {0}", perfcounter);
+    sb.appendLine();
+    
+    return tohtml(resultset, sb.append(resultset2).toString()); // html resultset
+    return sb.append(resultset2).toString();
+    
+    return resultset; // json resultset 
+}
+
+
+//
+//
+//
+module.exports.f74008aa7 = f74008aa7;
+module.exports = { 
+  // runtimeCompiler: true,
+  main: function (event, context) {
+       
+    return hanacloud(); //hanajdbc();  
+    //return ina();
+     /**/
+    
+    const url = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH&tsyms=USD,EUR";
+    const urltime = "http://worldtimeapi.org/api/timezone/Europe/London";
+    
+/*
+    const vm = new myvue({
+        el: '#app',
+        data: {
+          results: []
+        },
+        mounted() {
+          axios.get(url).then(response => {
+            this.results = response.data
+          })
+        }
+      });*/
+    
+    
+    axios.get(url).then(response => {
+            this.results = JSON.stringify(response.data, null, 4);
+          });
+    axios.get(urltime).then(response => {
+            this.results2 = JSON.stringify(response.data, null, 4);
+          });
+       
+    
+    return ina();
+    
+    // https://stackoverflow.com/questions/52669596/promise-all-with-axios
+    const promiseArray = [axios.get(url), axios.get(urltime), ina(), cubes()];
+    
+//    Promise.all(promiseArray).then(function(values) {
+    Promise.all(promiseArray).then((values) => {
+        //console.log(values); 
+        this.results = JSON.stringify(values[0].data, null, 4);
+        this.results2 = JSON.stringify(values[1].data, null, 4);
+        this.results3 = values[2];
+        this.results4 = values[3];
+    }).catch((err) => { console.log(err); return JSON.stringify(err);
+        });   
+                
+    return this.results + this.results2 + this.results3 + this.results4; //cubes(); //+ ina(); //phll41000067d(); //ina();
+  }
+}
