@@ -444,7 +444,25 @@ async function hanacloud() {
     var dbConnection = hana.createConnection();
 
     var sqlStatement = "SELECT * FROM TABLES WHERE SCHEMA_NAME = 'D2D4E6C18E7044B2B75416F0AC035F94'";  //"SELECT * FROM SCHEMAS";  //"SELECT * FROM SYS.M_DATABASES"; //"SELECT * FROM SYS.M_SERVICES";
-
+    //sqlStatement = `SELECT CURRENT_USER AS "Current User", CURRENT_SCHEMA AS "Current Schema" FROM DUMMY`;
+    
+/*
+    sqlStatement = `SELECT A.CONTAINER_NAME, A.CONTAINER_GROUP_NAME, B.SCHEMA_NAME, A.CREATE_USER_NAME, A.CREATE_TIMESTAMP_UTC
+        FROM ( _SYS_DI.M_ALL_CONTAINERS AS A
+               INNER JOIN _SYS_DI.M_ALL_CONTAINER_SCHEMAS AS B
+               ON ( A.CONTAINER_NAME = B.CONTAINER_NAME 
+               AND  B.SCHEMA_TYPE = 'com.sap.hana.runtime.db.target/*' ) )
+         WHERE A.CONTAINER_NAME LIKE ? 
+           AND A.CONTAINER_GROUP_NAME LIKE ?
+         ORDER BY A.CONTAINER_NAME `;
+    let query =
+  `SELECT SCHEMA_NAME, VIEW_NAME, TO_NVARCHAR(VIEW_OID) AS VIEW_OID, COMMENTS  from VIEWS 
+  WHERE SCHEMA_NAME LIKE ? 
+    AND VIEW_NAME LIKE ? 
+  ORDER BY VIEW_NAME `;
+       
+    sqlStatement =  query;  
+    */
     var resultset = 0;
     var resultset2 = 0;
     var perfcounter = 0;
